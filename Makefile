@@ -1,7 +1,7 @@
 NAME=herokuish
 HARDWARE=$(shell uname -m)
-VERSION=0.2.0
-CEDARISH=v2
+VERSION=0.3.0
+CEDARISH=v3
 
 build:
 	echo "$(CEDARISH)" > include/cedarish.txt
