@@ -3,3 +3,4 @@ build
 .cache
 include/cedarish.txt
 bindata.go
+Dockerfile

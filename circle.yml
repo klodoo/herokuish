@@ -11,8 +11,16 @@ dependencies:
     - make deps
   override:
     - make build
+  post:
+    - tar -czf $CIRCLE_ARTIFACTS/herokuish-linux.tgz -C build/linux herokuish
+    - tar -czf $CIRCLE_ARTIFACTS/herokuish-darwin.tgz -C build/darwin herokuish
+    - docker run --name cedar14-build herokuish:cedar14 /bin/true
+    - docker export cedar14-build | gzip -c9 > $CIRCLE_ARTIFACTS/cedar14.tgz:
+        background: true
 
 test:
+  pre:
+    - make buildpacks
   override:
     - tests/shunit2:
         parallel: true
@@ -23,4 +31,5 @@ deployment:
   release:
     branch: release
     commands:
+      - cp $CIRCLE_ARTIFACTS/cedar14.tgz build/cedar14.tgz
       - make release

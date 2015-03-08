@@ -1,5 +1,5 @@
 
-source "$(dirname $BASH_SOURCE)/../runner.sh"
+source "$(dirname $BASH_SOURCE)/../util/helper.sh"
 
 test-z2-app-php() {
 	run-app-test php "php"
