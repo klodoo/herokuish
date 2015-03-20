@@ -27,6 +27,16 @@ main() {
 	[[ "$CI" ]] || rmflag="--rm"
 	docker run $rmflag -v "$app_abspath:/tmp/app" --volumes-from herokuish-buildpacks "$cedarish_image:$cedarish_version" bash -c "\
 		rm -rf /app && cp -r /tmp/app /app
+
+                wget https://s3.amazonaws.com/akretion/packages/wkhtmltox-0.12.1_linux-trusty-amd64.deb && \
+                dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb
+
+                echo '=== INSTALLING EXTRA NATIVE LIBS FOR ODOO ==='
+                export DEBIAN_FRONTEND=noninteractive
+                apt-get update
+                apt-get install -y libsasl2-dev graphviz python-cups python-dbus
+                apt-get clean
+
 		/mnt/build/linux/herokuish buildpack build
 		PORT=5678 /mnt/build/linux/herokuish procfile start web &
 		for retry in \$(seq 1 10); do sleep 1 && nc -z -w 5 localhost 5678 && break; done
