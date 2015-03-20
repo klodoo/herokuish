@@ -14,6 +14,17 @@ download-buildpacks() {
 		/mnt/build/linux/herokuish buildpack install
 }
 
+
+check-postgres() {
+        [[ "$(docker ps -qaf name=postgres-server)" ]]
+}
+
+init-postgres() {
+        docker run --name postgres-server -e POSTGRES_PASSWORD=mysecretpassword -d postgres
+}
+
+
+
 main() {
 	declare app_abspath="$1" expected_output="$2"
 	[[ -x "$PWD/build/linux/herokuish" ]] || {
@@ -24,7 +35,7 @@ main() {
 	set -eo pipefail; [[ "$TRACE" ]] && set -x
 	check-cedarish || import-cedarish
 	check-buildpacks || download-buildpacks
-        docker run --name postgres-server -e POSTGRES_PASSWORD=mysecretpassword -d postgres
+        check-postgres || init-postgres
 	[[ "$CI" ]] || rmflag="--rm"
 	docker run $rmflag -v "$app_abspath:/tmp/app" --link postgres-server:postgres-server --volumes-from herokuish-buildpacks "$cedarish_image:$cedarish_version" bash -c "\
 		rm -rf /app && cp -r /tmp/app /app
