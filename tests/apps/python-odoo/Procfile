@@ -1,0 +1,1 @@
+web: python bin/start_openerp --xmlrpc-port=$PORT --db_host=postgres-server -w mysecretpassword -r postgres
